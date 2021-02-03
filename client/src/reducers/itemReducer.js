@@ -17,7 +17,7 @@ export default function(state = initialState, action ) {
         case actions.DELETE_ITEMS:
             return {
                 ...state,
-                items: state.items.filter(item => item.id !== action.payload)
+                items: state.items.filter(item => item._id !== action.payload)
             }
         case actions.ADD_ITEMS:
             return {

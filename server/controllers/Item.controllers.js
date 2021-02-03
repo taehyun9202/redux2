@@ -10,7 +10,7 @@ class ItemController {
     create(req, res){
         const newItem = new Item(req.body);
         newItem.save()
-               .then(()=> res.json(items))
+               .then(res => res.json(items))
                .catch(err => res.json(err));
     }
     delete(req, res){

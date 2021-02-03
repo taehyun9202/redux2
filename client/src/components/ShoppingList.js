@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Container, ListGroup, ListGroupItem, Button } from 'reactstrap'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { connect, useSelector, useDispatch  } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { getItem, deleteItem } from '../actions/itemActions'
 import PropTypes from 'prop-types'
 import * as actions from '../actions/types'
@@ -9,10 +9,13 @@ import * as actions from '../actions/types'
 
 function ShoppingList(props) {
     const list = useSelector(list => props.item);
-    const dispatch = useDispatch();
     
     const onDeleteHandler = id => {
-        dispatch({type:actions.DELETE_ITEMS, payload: id})
+        props.deleteItem(id)
+    }
+
+    ShoppingList.propTypes = {
+        isAuthenticated: PropTypes.bool
     }
     
     useEffect(() => {
@@ -24,15 +27,16 @@ function ShoppingList(props) {
             <Container>
                 <ListGroup> 
                     <TransitionGroup className="shoppingList_List">
-                        {list.items.map(({id, name }) => (
-                            <CSSTransition key={id} timeout={500} classNames="fade">
+                        {list.items.map(({ _id, name }) => (
+                            <CSSTransition key={_id} timeout={500} classNames="fade">
                                 <ListGroupItem>
-                                    <Button
-                                        className="remove-btn"
-                                        color="danger"
-                                        size="sm"
-                                        onClick={() => onDeleteHandler(id)}
-                                    >&times;</Button>
+                                    {props.isAuthenticated === true ?
+                                        <Button
+                                            className="remove-btn"
+                                            color="danger"
+                                            size="sm"
+                                            onClick={() => onDeleteHandler(_id)}
+                                        >&times;</Button> : null }
                                     {name}
                                 </ListGroupItem>
                             </CSSTransition>
@@ -51,7 +55,8 @@ ShoppingList.propTypes = {
 }
 
 const mapStateToProps = state => ({
-    item: state.item
+    item: state.item,
+    isAuthenticated: state.auth.isAuthenticated
 })
 
 export default connect(mapStateToProps, { getItem, deleteItem })(ShoppingList)
